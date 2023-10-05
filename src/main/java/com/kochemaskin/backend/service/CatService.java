@@ -18,25 +18,66 @@ import java.util.List;
 public class CatService {
 
     private final CatRepository catRepository;
-
     private final CatMapper catMapper;
 
-
     public List<CatDto> allCats() {
-        List<Cat> allCats = catRepository.findAll();
-        return catMapper.toCatDtos(allCats);
-    }
-
-
-    public CatDto getCat(Long id) {
-        Cat cat = catRepository.findById(id)
-                .orElseThrow(()-> new AppException("Cat not found", HttpStatus.NOT_FOUND));
-        return catMapper.toCatDto(cat);
+        return catMapper.toCatDtos(catRepository.findAll());
     }
 
     public CatDto createCat(CatDto catDto) {
         Cat cat = catMapper.toCat(catDto);
+
         Cat savedCat = catRepository.save(cat);
+
         return catMapper.toCatDto(savedCat);
+    }
+
+    public CatDto updateCat(Long id, CatDto catDto) {
+        Cat cat = catRepository.findById(id)
+                .orElseThrow(() -> new AppException("Cat not found", HttpStatus.NOT_FOUND));
+
+        catMapper.updateCat(cat, catMapper.toCat(catDto));
+
+        Cat savedCat = catRepository.save(cat);
+
+        return catMapper.toCatDto(savedCat);
+    }
+
+    public CatDto patchCat(Long id, CatDto catDto) {
+        Cat cat = catRepository.findById(id)
+                .orElseThrow(() -> new AppException("Cat not found", HttpStatus.NOT_FOUND));
+
+        if (catDto.getBreed() != null) {
+            cat.setBreed(catDto.getBreed());
+        }
+        if (catDto.getName() != null) {
+            cat.setName(catDto.getName());
+        }
+        if (catDto.getYear() != 0) {
+            cat.setYear(catDto.getYear());
+        }
+        if (catDto.getColor() != null) {
+            cat.setColor(catDto.getColor());
+        }
+
+        Cat savedCat = catRepository.save(cat);
+
+        return catMapper.toCatDto(savedCat);
+    }
+
+    public CatDto deleteCat(Long id) {
+        Cat cat = catRepository.findById(id)
+                .orElseThrow(() -> new AppException("Cat not found", HttpStatus.NOT_FOUND));
+        CatDto catDto = catMapper.toCatDto(cat);
+
+        catRepository.deleteById(id);
+
+        return catDto;
+    }
+
+    public CatDto getCat(Long id) {
+        Cat cat = catRepository.findById(id)
+                .orElseThrow(() -> new AppException("Cat not found", HttpStatus.NOT_FOUND));
+        return catMapper.toCatDto(cat);
     }
 }

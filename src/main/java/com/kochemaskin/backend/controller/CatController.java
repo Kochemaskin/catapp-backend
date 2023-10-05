@@ -22,14 +22,29 @@ public class CatController {
         return ResponseEntity.ok(catService.allCats());
     }
 
+    @PostMapping("/cats")
+    public ResponseEntity<CatDto> createCat(@Valid @RequestBody CatDto catDto) {
+        CatDto createdCat = catService.createCat(catDto);
+        return ResponseEntity.created(URI.create("/cats/" + catDto.getId())).body(createdCat);
+    }
+
     @GetMapping("/cats/{id}")
-    public ResponseEntity<CatDto> getCat(@PathVariable Long id){
+    public ResponseEntity<CatDto> getCat(@PathVariable Long id) {
         return ResponseEntity.ok(catService.getCat(id));
     }
 
-    @PostMapping("/cats")
-    public ResponseEntity<CatDto> createCat(@Valid @RequestBody CatDto catDto){
-        CatDto createdCat = catService.createCat(catDto);
-        return ResponseEntity.created(URI.create("/cats/" + catDto.getId())).body(createdCat);
+    @PutMapping("/cats/{id}")
+    public ResponseEntity<CatDto> updateCat(@PathVariable Long id, @Valid @RequestBody CatDto catDto) {
+        return ResponseEntity.ok(catService.updateCat(id, catDto));
+    }
+
+    @PatchMapping("/cats/{id}")
+    public ResponseEntity<CatDto> patchCat(@PathVariable Long id, @RequestBody CatDto catDto) {
+        return ResponseEntity.ok(catService.patchCat(id, catDto));
+    }
+
+    @DeleteMapping("/cats/{id}")
+    public ResponseEntity<CatDto> deleteCat(@PathVariable Long id) {
+        return ResponseEntity.ok(catService.deleteCat(id));
     }
 }
